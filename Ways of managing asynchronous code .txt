@@ -1,0 +1,47 @@
+ Ways of managing asynchronous code in JavaScript:
+  1. Callbacks: Functions passed as arguments to other functions to be executed after completion.
+  2. Promises: Objects representing the eventual completion or failure of an asynchronous operation, allowing for easier chaining and error handling.
+  3. Async/Await: Syntactic sugar over Promises, providing a way to write asynchronous code that looks more like synchronous code.
+
+- What is a Promise?
+  A Promise is an object representing the eventual completion or failure of an asynchronous operation. It can be in one of three states: pending, fulfilled, or rejected.
+
+- Differences between an async function and a regular function:
+  1. Async functions always return a Promise, while regular functions return a direct value.
+  2. Async functions allow the use of the await keyword to pause execution until a Promise is resolved, enabling synchronous-like code for asynchronous operations.
+  3. Regular functions execute synchronously unless they explicitly involve asynchronous code like callbacks or Promises.
+
+- Difference between Node.js and Express.js:
+  Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine, enabling JavaScript to run on the server-side. Express.js is a web application framework for Node.js, simplifying the development of server-side applications through middleware, routing, etc.
+
+- What is the error-first callback pattern?
+  It's a convention in Node.js where callbacks are passed an error object as their first parameter. If the operation was successful, the error will be null or undefined; otherwise, it contains an error detail. This pattern helps in handling errors effectively.
+
+- What is middleware?
+  Middleware refers to functions that have access to the request object (req), response object (res), and the next middleware function in the application’s request-response cycle. Middleware can execute code, make changes to the request and response objects, end the request-response cycle, or call the next middleware in the stack.
+
+- What does the `next` function do?
+  The `next` function is a part of the Express.js middleware. It is used to pass control to the next middleware function in the stack. If not called, the request will hang.
+
+- Issues with the provided code:
+  1. Performance: The `await` is used sequentially, which causes each request to wait for the previous one to complete. This increases the total time taken.
+  2. Naming: Variable names are specific to users, which isn't scalable or descriptive of the function's purpose.
+  3. Error Handling: There's no try-catch block to handle potential errors from the network requests.
+  4. Structure: It's more efficient and cleaner to use Promise.all for concurrent requests.
+
+A more optimized version could look like this:
+
+```js
+async function getUsers() {
+  try {
+    const users = await Promise.all([
+      $.getJSON('https://api.github.com/users/elie'),
+      $.getJSON('https://api.github.com/users/joelburton'),
+      $.getJSON('https://api.github.com/users/mmmaaatttttt'),
+    ]);
+    return users; // Adjust the order if necessary
+  } catch (error) {
+    // Handle errors, e.g., logging or throwing an error
+    console.error("Failed to fetch users:", error);
+  }
+}
